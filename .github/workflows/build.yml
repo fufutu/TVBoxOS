@@ -1,0 +1,35 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ "main", "master", "buildaapk" ]
+  workflow_dispatch: # 支持手动点击按钮触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 执行标准的 Debug 打包（不需要签名证书）
+    - name: Build Debug APK with Gradle
+      run: ./gradlew assembleDebug
+
+    # 上传编译好的 Debug APK 供下载
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-apk
+        path: app/build/outputs/apk/debug/*.apk
