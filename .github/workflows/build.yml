@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [ "main", "buildaapk" ]
+    branches: [ "main", "master" ]
   workflow_dispatch: # 支持手动点击按钮触发
 
 jobs:
@@ -20,10 +20,11 @@ jobs:
         java-version: '17'
         cache: 'gradle'
 
-    # 1. 新增这一步：创建空的 local.properties 文件以满足项目配置需求
+    # 动态生成正确的 local.properties（包含 Android SDK 路径和 Linux 下的 python3 路径）
     - name: Create local.properties
       run: |
         echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+        echo "buildPython=python3" >> local.properties
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
