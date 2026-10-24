@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [ "main", "master", "buildaapk" ]
+    branches: [ "main", "buildaapk" ]
   workflow_dispatch: # 支持手动点击按钮触发
 
 jobs:
@@ -20,10 +20,15 @@ jobs:
         java-version: '17'
         cache: 'gradle'
 
+    # 1. 新增这一步：创建空的 local.properties 文件以满足项目配置需求
+    - name: Create local.properties
+      run: |
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 执行标准的 Debug 打包（不需要签名证书）
+    # 执行构建
     - name: Build Debug APK with Gradle
       run: ./gradlew assembleDebug
 
